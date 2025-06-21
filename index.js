@@ -5,8 +5,9 @@ const { Client } = require("@notionhq/client");
 
 const app = express();
 const allowedOrigins = [
-  "http://localhost:3000",
-  "https://fravha.github.io"
+  "http://localhost:3000",    // Pruebas internas
+  "https://fravha.github.io", // Produccion
+  "http://127.0.0.1:5500"     //QA
 ];
 
 app.use(cors({
@@ -72,6 +73,35 @@ app.get("/api/contactos", async (req, res) => {
         nombre: page.properties.Nombre.title[0]?.text?.content || "",
         correo: page.properties.Correo.email || "",
         telefono: page.properties.Teléfono.phone_number || "",
+        linkedin: page.properties.LinkedIn.url || "",
+        fecha: page.properties.Fecha?.date?.start || page.created_time
+      };
+    });
+
+    res.status(200).json(contactos);
+  } catch (error) {
+    console.error("Error al obtener contactos:", error.message);
+    res.status(500).json({ error: "No se pudieron obtener los contactos" });
+  }
+});
+
+app.get("/api/contactos", async (req, res) => {
+  try {
+    const response = await notion.databases.query({
+      database_id: databaseId,
+      sorts: [
+        {
+          timestamp: "created_time",
+          direction: "descending"
+        }
+      ]
+    });
+
+    const contactos = response.results.map((page) => {
+      return {
+        nombre: page.properties.Nombre.title[0]?.text?.content || "",
+        correo: page.properties.Correo.email || "",
+        telefono: page.properties.Telefono.phone_number || "",
         linkedin: page.properties.LinkedIn.url || "",
         fecha: page.properties.Fecha?.date?.start || page.created_time
       };
