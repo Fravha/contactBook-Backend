@@ -4,7 +4,20 @@ const cors = require("cors");
 const { Client } = require("@notionhq/client");
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://fravha.github.io"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("No permitido por CORS"));
+    }
+  }
+}));
 app.use(express.json());
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
