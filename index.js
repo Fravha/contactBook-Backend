@@ -72,7 +72,7 @@ app.get("/api/contactos", async (req, res) => {
       return {
         nombre: page.properties.Nombre.title[0]?.text?.content || "",
         correo: page.properties.Correo.email || "",
-        telefono: page.properties.Teléfono.phone_number || "",
+        telefono: page.properties.Telefono.phone_number || "",
         linkedin: page.properties.LinkedIn.url || "",
         fecha: page.properties.Fecha?.date?.start || page.created_time
       };
@@ -116,5 +116,5 @@ app.get("/api/contactos", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en puerto: ${PORT}`);
 });
